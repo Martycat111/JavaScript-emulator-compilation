@@ -1,0 +1,91 @@
+@font-face {
+    font-family: 'SF Pro Rounded';
+    src: url('fonts/SFProRounded-Semibold.woff2') format('woff2'),
+         url('fonts/SFProRounded-Semibold.woff') format('woff');
+    font-weight: 600;
+    font-style: normal;
+}
+
+body {
+    font-family: 'SF Pro Rounded', Arial, sans-serif;
+    background-color: #2E2D34;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    color: white;
+}
+
+header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.logo {
+    width: 76px;
+    height: 80px;
+}
+
+h1 {
+    font-size: 36px;
+    margin: 10px 0 0;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.file-inputs {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.file-upload {
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+}
+
+.file-upload input[type="file"] {
+    display: none;
+}
+
+.file-upload span {
+    display: inline-block;
+    padding: 10px 20px;
+    border: 2px solid #fff;
+    background-color: #2E2D34;
+    color: white;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+.file-upload span:hover {
+    background-color: #444;
+}
+
+.start-game {
+    padding: 10px 20px;
+    border: none;
+    background-color: #ea6f11;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.start-game:hover {
+    background-color: #d85d0d;
+}
+
+#emulator {
+    margin-top: 20px;
+}

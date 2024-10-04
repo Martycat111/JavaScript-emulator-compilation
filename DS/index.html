@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>KurumaDS</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/emulatorjs@1.0.0/dist/emulator.js"></script>
+    <script src="emulator-config.js"></script>
+</head>
+<body>
+    <header>
+        <img src="logo.svg" alt="KurumaDS Logo" class="logo">
+        <h1>KurumaDS</h1>
+    </header>
+    <main>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <div class="file-inputs">
+                <label class="file-upload">
+                    <span>Upload .NDS</span>
+                    <input type="file" name="ndsFile" accept=".nds" required>
+                </label>
+                <label class="file-upload">
+                    <span>Upload .SAV (optional)</span>
+                    <input type="file" name="savFile" accept=".sav">
+                </label>
+            </div>
+            <button type="submit" class="start-game">Start Game</button>
+        </form>
+        <div id="emulator"></div>
+    </main>
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            let formData = new FormData(event.target);
+            let response = await fetch('/api/upload', {
+                method: 'POST',
+                body: formData
+            });
+            let result = await response.json();
+            alert(result.message);
+
+            if (result.ndsPath && result.savPath) {
+                const emulatorDiv = document.getElementById('emulator');
+                emulatorDiv.innerHTML = `<emulator-js src="${result.ndsPath}" bios-url="${result.savPath}" system="nds"></emulator-js>`;
+                EmulatorJS.init();
+            }
+        });
+    </script>
+</body>
+</html>
