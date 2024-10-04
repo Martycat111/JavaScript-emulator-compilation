@@ -1,0 +1,14 @@
+# Contains all code
+combined="dist/combined.js"
+cat src/*.h src/*.js > $combined
+
+# Contains preprocessed code
+preprocessed="dist/preprocessed.js"
+/usr/bin/cpp -P -undef < $combined > $preprocessed
+
+# Contains final code
+final="dist/pseudo.js"
+sed "/^[t|s]*$/d" $preprocessed > $final
+
+rm -f $combined
+rm -f $preprocessed
