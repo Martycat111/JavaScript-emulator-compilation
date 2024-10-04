@@ -1,0 +1,666 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="Apple IIe Computer written in ES6">
+  <meta name="author" content="John Clark">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="favicon.png">
+  <title>Apple IIe</title>
+  <style type="text/css">
+    body {
+        margin:0;
+        padding:0;
+        user-select:none;
+        -webkit-user-select:none;
+        -moz-user-select:none;
+        font-size:13px;
+        font-family:sans-serif;
+        background:#e1e1d1;
+    }
+    div.top {
+        display:flex;
+    }
+    div.display {
+        flex-grow:0;
+        min-width:634px;
+        max-width:95%;
+    }
+    div.display>div {
+        display:inline-block;
+        margin:20px;
+        padding:12px;
+        box-shadow:inset -1px -1px 0 0 #afaf83;
+        border:2px groove #cfcfa3;
+        background:#111;
+        position:relative;
+    }
+    div.display>div>canvas {
+        image-rendering:optimizeSpeed;
+        image-rendering:-moz-crisp-edges;
+        image-rendering:pixelated;
+    }
+    div.display>div>input {
+        resize:none;
+        border:none;
+        top:0;
+        left:0;
+        height:100%;
+        width:100%;
+        color:transparent;
+        background:transparent;
+        position:absolute;
+    }
+    div.side {
+        display:flex;
+    }
+    div.sizer {
+        cursor:col-resize;
+        margin:20px 0 20px 0;
+        background:#afaf83;
+        border:2px groove #cfcfa3;
+    }
+    div.middle {
+        margin-left:30px;
+    }
+    div.buttons {
+        padding:0 12px 0 12px;
+    }
+    div.buttons>button {
+        margin:4px;
+        margin-top:0;
+        padding-bottom:2px;
+        border:1px solid #c5c5c5;
+        border-radius:4px;
+        width:6em;
+        height:2.5em;
+        font-size:13px;
+        color:#f5f5ef;
+        background:#734d26;
+    }
+    div.buttons>button:hover:active {
+        color:#520;
+        background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #377b7b), color-stop(1, #499));
+        background:-moz-linear-gradient(center top, #377b7b 5%, #499 100%);
+    }
+    div.buttons>button:hover {
+        background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #86592d), color-stop(1, #734d26));
+        background:-moz-linear-gradient(center top, #86592d 5%, #734d26 100%);
+    }
+    div.buttons>div {
+        margin-left:200px;
+        display:inline-flex;
+        align-items:center
+    }
+    input[type=range] {
+        -webkit-appearance:none;
+        margin-left:8px;
+    }
+    input[type=range]::-webkit-slider-thumb {
+        -webkit-appearance:none;
+        box-shadow:1px 1px 1px #000, 0 0 1px #ddd;
+        border:1px solid #000;
+        margin-top:-8px;
+        height:19px;
+        width:6px;
+        border-radius:3px;
+        background:#ddc;
+        cursor:pointer;
+    }
+    input[type=range]::-moz-range-thumb {
+        box-shadow:1px 1px 1px #000, 0 0 1px #ddd;
+        border:1px solid #000;
+        height:17px;
+        width:4px;
+        border-radius:3px;
+        background:#ddc;
+        cursor:pointer;
+    }
+    input[type=range]::-webkit-slider-runnable-track {
+        height:3px;
+        cursor:pointer;
+        box-shadow:1px 1px 1px #000, 0 0 1px #ddd;
+        background:#afaf83;
+        border-radius:2px;
+        border:0.2px solid #111;
+    }
+    input[type=range]::-moz-range-track {
+        height:1px;
+        cursor:pointer;
+        box-shadow:1px 1px 1px #000, 0 0 1px #ddd;
+        background:#afaf83;
+        border-radius:2px;
+        border:0.2px solid #111;
+    }
+    div.drives {
+        margin:0 0 0 220px;
+        display:inline-block;
+        vertical-align:bottom;
+    }
+    div.drive {
+        margin:12px 12px 1px 12px;
+    }
+    div.drive button {
+        padding:4px 12px 4px 12px;
+        background:#eee;
+        border:1px solid #aaa;
+        border-radius:5px;
+    }
+    div.drive>details {
+        border:1px solid #734d26;
+        display:inline-block;
+        xbackground:#d2d1c1;
+    }
+    div.drive>details>summary {
+        padding:20px;
+        min-width:26em;
+    }
+    div.drive>details>summary>span:nth-child(1) {
+        margin-right:16px;
+    }
+    div.drive>details>div {
+        margin:0 18px 14px 18px;
+        width:36em;
+    }
+    div.drive>details>div>div {
+        display:flex;
+        align-items:center;
+        margin-bottom:8px;
+    }
+    div.drive>details>div span {
+        width:1.8em;
+    }
+    div.drive>details>div input {
+        flex:1;
+    }
+    div.drive>details>div button {
+        margin-left:6px;
+        width:6.2em;
+    }
+    input[readonly] {
+        background:#eee;
+    }
+    span.led {
+        float:right;
+        padding:4px 7px 4px 7px;
+        border-radius:8px;
+        font-size:5px;
+        vertical-align:middle;
+        color:#734d26;
+        box-shadow:0 0 4px #999;
+        background:#d0d0d0;
+    }
+    span.led.on {
+        color:#e1e1d0;
+        box-shadow:0 0 6px #d44;
+        background:radial-gradient(#d00, #900);
+    }
+    input[type=file] {
+        font-size:20px;
+        position:absolute;
+        left:0;
+        top:0;
+        opacity:0;
+    }
+    div.settings {
+        margin:0 0 0 18px;
+        padding:6px;
+        border:2px groove #cfcfa3;
+        display:inline-block;
+        vertical-align:bottom;
+    }
+    div.settings>div {
+        margin:6px;
+    }
+    div.settings button {
+        padding:4px;
+        background:#eee;
+        border:1px solid #aaa;
+        border-radius:5px;
+    }
+    div.color>select {
+        padding:3px;
+        background:#eee;
+        border:1px solid #aaa;
+        border-radius:5px;
+        width:12em;
+    }
+    div.gamepad {
+        width:37;
+        height:24;
+        float:right;
+        background-image:url("gamepad.png");
+    }
+    div.gamepad.off {
+        opacity:0.2;
+        filter:grayscale(100%);
+    }
+    div.doc {
+        margin:20px 0 0 250px;
+        display:flex;
+    }
+    div.doc>div {
+        margin-left:40px;
+    }
+    div.bottom {
+        margin:100px 0 40px 40px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="top">
+      <div class="display">
+        <div><canvas height="390" width="564"></canvas><input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="password"></div>
+      </div>
+      <div class="side">
+        <div class="sizer"></div>
+      </div>
+    </div>
+    <div class="middle">
+
+      <div class="buttons">
+        <button id="run_stop">run</button>
+        <button id="reset">reset</button>
+        <div><img src="sound.png"><input type="range" min="0" max="1" value="0.6" step="0.1"></div>
+      </div>
+
+      <div class="drives">
+        <div class="drive">
+          <details>
+            <summary>
+              <span>drive 1</span>
+              <span id="drivetitle1">&nbsp;&nbsp;&nbsp;&nbsp;&lt;click to set drive 1 source&gt;</span>
+              <span class="led" id="led1">&nbsp;</span>
+            </summary>
+            <div>
+              <div><span>file</span>&nbsp;<input id="file1" type="text" readonly>&nbsp;<div style="position:relative"><button>browse...</button><input type="file" id="filedialog1"></div></div>
+              <div><span>url</span>&nbsp;<input id="url1" type="text">&nbsp;<button id="saveurl1">save...</button></div>
+            </div>
+          </details>
+        </div>
+        <div class="drive">
+          <details>
+            <summary>
+              <span>drive 2</span>
+              <span id="drivetitle2">&nbsp;&nbsp;&nbsp;&nbsp;&lt;click to set drive 2 source&gt;</span>
+              <span class="led" id="led2">&nbsp;</span>
+            </summary>
+            <div>
+              <div><span>file</span>&nbsp;<input id="file2" type="text" readonly>&nbsp;<div style="position:relative"><button>browse...</button><input type="file" id="filedialog2"></div></div>
+              <div><span>url</span>&nbsp;<input id="url2" type="text">&nbsp;<button id="saveurl2">save...</button></div>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div class="settings">
+        <div>
+          <button id="fullscreen">full screen</button>
+          <div class="gamepad off"></div>
+        </div>
+        <div class="color">
+          <select id="tcolor">
+            <option value="tg">green text</option>
+            <option value="ta">amber text</option>
+            <option value="tw">white text</option>
+          </select>
+        </div>
+        <div class="color">
+          <select id="gcolor">
+            <option value="gc">color graphics</option>
+            <option value="gg">green graphics</option>
+            <option value="ga">amber graphics</option>
+          </select>
+        </div>
+        <div>
+          <input type="checkbox" id="hscan"><label for="hscan"> horizontal scanlines (text)</label>
+        </div>
+        <div>
+          <input type="checkbox" id="vscan"><label for="vscan"> vertical scanlines (hgr)</label>
+        </div>
+      </div>
+
+    </div>
+    <div class="doc">
+      <div class="col1">
+        <p><a href="https://inindev.github.io/apple2e/index.html?u1=https://s3.us-east-2.amazonaws.com/apple2e/ProDOS_2_4_2.dsk">launch prodos 2.4.2 dsk image</a></p>
+      </div>
+      <div class="col2">
+        <p><a target="_blank" href="https://www.apple.asimov.net/documentation/os/dos/apple_dos_quick_reference_guide.pdf">dos quick ref</a></p>
+      </div>
+    </div>
+    <div class="bottom">
+      <span>see it on <a target="_blank" href="https://github.com/inindev/apple2e">github</a></span>
+      <span style="margin-left:260px">copyright 2018, <a target="_blank" href="https://www.linkedin.com/in/johnclarkdev">john clark</a>
+    </div>
+  </div>
+
+  <script type="module">
+    import {Motherboard} from "./motherboard.js";
+
+    class Drive
+    {
+        constructor(num, display, led, dialog, file_path, url_path, save_url) {
+            this.num = num;
+
+            this.display = document.getElementById(display);
+            this.led = document.getElementById(led);
+            this.dialog = document.getElementById(dialog);
+            this.file_path = document.getElementById(file_path);
+            this.url_path = document.getElementById(url_path);
+            this.save_url = document.getElementById(save_url);
+
+            this.dialog.addEventListener('change', this.on_file_select.bind(this));
+            this.url_path.addEventListener('change', this.on_url_change.bind(this));
+            this.save_url.addEventListener('click', this.on_save.bind(this));
+
+            this.file_path.value = "";
+            this.url_path.value = "";
+        }
+
+        on_file_select(e) {
+            this.display.innerText = "";
+            this.file_path.value = "";
+            this.url_path.value = "";
+
+            const file = e.target.files[0];
+            if(file.size != 143360) {
+                alert("file must be a 140k .dsk, .do, or .po file");
+                return;
+            }
+
+            const path = this.dialog.value;
+            const name = path.substring(path.lastIndexOf('\\') + 1);
+            this.file_path.value = path;
+            this.display.innerText = name;
+
+            const fr = new FileReader();
+            fr.onload = () => {
+                motherboard.floppy525.load_disk(this.num, name, fr.result);
+            };
+            fr.readAsArrayBuffer(file);
+
+            e.target.parentNode.parentNode.parentNode.parentNode.removeAttribute("open");
+        }
+
+        on_url_change(e) {
+            this.display.innerText = "";
+            this.file_path.value = "";
+
+            const url = e.target.value;
+            if(url) this.load_disk_url(url);
+            e.target.parentNode.parentNode.parentNode.removeAttribute("open");
+        }
+
+        load_disk_url(url, name) {
+            name = name || url.substring(url.lastIndexOf('/') + 1);
+
+            if(this.url_path.value != url) this.url_path.value = url;
+
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", url);
+            xhr.responseType = "arraybuffer";
+            xhr.onload = () => {
+                if(xhr.status != 200) {
+                    console.log("failed to load " + url + "  status: " + xhr.status);
+                    return;
+                }
+
+                const rc = motherboard.floppy525.load_disk(this.num, name, xhr.response);
+                if(rc) {
+                    this.display.innerText = name;
+                    console.log("disk " + (this.num+1) + " loaded: " + url);
+                }
+            };
+            xhr.send();
+        }
+
+        on_save(e) {
+            if(!this.url_path.value) return;
+
+            const url = this.url_path.value;
+            const name = this.display.innerText || url.substring(url.lastIndexOf('/') + 1);
+
+            const a = document.createElement('a');
+            document.body.appendChild(a);
+            a.href = url;
+            a.download = name;
+            a.click();
+            setTimeout(() => {
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            }, 0)
+        }
+
+        set_led(state) {
+            this.led.className= state ? "led on" : "led";
+        }
+    }
+
+    const drives = [
+        new Drive(0, "drivetitle1", "led1", "filedialog1", "file1", "url1", "saveurl1"),
+        new Drive(1, "drivetitle2", "led2", "filedialog2", "file2", "url2", "saveurl2")
+    ];
+
+    ////////////////////////////////////////////////////////////
+
+    // Understanding the Apple II, p.3-3
+    // composite freq: 1020.5kHz
+    const khz = 1020.5;
+    let motherboard;
+    let body;
+    let canvas;
+    let canvas_input;
+    let gamepad_elem;
+    let run_stop_btn;
+    let interval;
+    let last_ms;
+    let mouse_offs = 0;
+
+    function stop() {
+        run_stop_btn.innerText = "run";
+        if(interval) {
+            window.cancelAnimationFrame(interval);
+            interval = undefined;
+        }
+    }
+
+    function run() {
+        run_stop_btn.innerText = "stop";
+        if(interval) return;
+        motherboard.audio.init();
+        last_ms = performance.now();
+        interval = window.requestAnimationFrame(on_interval);
+    }
+
+    function on_interval(now_ms) {
+        const cycles = ((now_ms - last_ms) * khz) & 0x7fff;
+        last_ms = now_ms;
+        motherboard.clock(cycles);
+        interval = window.requestAnimationFrame(on_interval);
+    }
+
+    function reset(event) {
+        const was_stopped = !interval;
+        stop();
+        const cold = event && (event.shiftKey || event.altKey || event.metaKey);
+        motherboard.reset(cold);
+        if(!was_stopped) run();
+    }
+
+    function display_fullscreen(e) {
+        const fullscreen = (canvas.requestFullscreen || canvas.mozRequestFullScreen || canvas.webkitRequestFullscreen).bind(canvas);
+        fullscreen();
+    }
+
+    function display_color(e) {
+        const val = e.target.value;
+        if(val[0] == 't') {
+            const rgb = {tg:0x00ff66, ta:0xffd429, tw:0xeeeeee}[val];
+            motherboard.display_text.fore = rgb;
+            localStorage.setItem("settings.tcolor", val);
+        } else {
+            const rgb = {gc:0, gg:0x00ff66, ga:0xffd429}[val];
+            motherboard.display_hires.fore = rgb;
+            motherboard.display_double_hires.fore = rgb;
+            localStorage.setItem("settings.gcolor", val);
+        }
+    }
+
+    function display_hscan(e) {
+        motherboard.display_text.hscan = e.target.checked;
+        localStorage.setItem("settings.hscan", e.target.checked);
+    }
+
+    function display_vscan(e) {
+        motherboard.display_hires.vscan = e.target.checked;
+        localStorage.setItem("settings.vscan", e.target.checked);
+    }
+
+    function gamepad_connection(e) {
+        if(e.type === "gamepaddisconnected") {
+            if(motherboard.joystick.gamepad == e.gamepad) {
+                motherboard.joystick.gamepad = undefined;
+                gamepad_elem.className= "gamepad off";
+            }
+        } else {
+            motherboard.joystick.gamepad = e.gamepad;
+            gamepad_elem.className= "gamepad";
+        }
+    }
+
+    function parse_params() {
+        let params = [];
+        const tokens = window.location.search.substr(1).split("&");
+        for(let token of tokens) {
+            const nvp = token.split('=');
+            if(nvp.length == 2) params[nvp[0]] = nvp[1];
+        }
+
+        const u2 = params["u2"];
+        const n2 = params["n2"];
+        if(u2) drives[1].load_disk_url(u2, n2);
+
+        const u1 = params["u1"];
+        const n1 = params["n1"];
+        if(u1) {
+            drives[0].load_disk_url(u1, n1);
+            run();
+        }
+    }
+
+    function key_down(e) {
+        if(e.keyCode == 0) return;
+        if((e.target != canvas_input) && (e.target != body)) return;
+        if(!e.metaKey) e.preventDefault();
+        motherboard.keyboard.key_down(e.keyCode, e.shiftKey, e.ctrlKey, e.metaKey);
+    }
+    function key_down_trans(e) {
+        if(e.keyCode == 0) return;
+        if((e.target != canvas_input) && (e.target != body)) return;
+        if(!e.metaKey) e.preventDefault();
+        const code = {0xba:0x3b, 0xbb:0x3d, 0xbd:0xad}[e.keyCode] || e.keyCode; // ; = -
+        motherboard.keyboard.key_down(code, e.shiftKey, e.ctrlKey, e.metaKey);
+    }
+    function key_up(e) {
+        if(e.keyCode == 0) { // helpful for some mobile browsers
+            const code = e.target.value.charCodeAt();
+            motherboard.keyboard.key_down(code, false, false, false);
+            e.target.value = "";
+        }
+        if((e.target != canvas_input) && (e.target != body)) return;
+        motherboard.keyboard.key_up();
+    }
+
+    function init() {
+        window.addEventListener('resize', on_resize);
+        document.querySelector("div.sizer").addEventListener("mousedown", begin_resize, false);
+
+        document.querySelector("div.display").style.width = localStorage.getItem("settings.display.width") || "916";
+        window.dispatchEvent(new Event('resize'));
+
+        canvas = document.querySelector("div.display>div>canvas");
+        motherboard = new Motherboard(khz, canvas, (n,s)=>{drives[n].set_led(s)});
+        motherboard.reset();
+
+        body = document.querySelector("body");
+        canvas_input = document.querySelector("input[type=password]");
+        const ff = navigator.userAgent.toLowerCase().indexOf('firefox') > 0;
+        document.addEventListener('keydown', ff?key_down:key_down_trans);
+        document.addEventListener('keyup', key_up);
+
+        gamepad_elem = document.querySelector("div.gamepad");
+        window.addEventListener("gamepadconnected", gamepad_connection);
+        window.addEventListener("gamepaddisconnected", gamepad_connection);
+
+        document.getElementById("fullscreen").addEventListener("click", display_fullscreen);
+        const tcolor = document.getElementById("tcolor");
+        const gcolor = document.getElementById("gcolor");
+        tcolor.addEventListener("change", display_color);
+        gcolor.addEventListener("change", display_color);
+        tcolor.value = localStorage.getItem("settings.tcolor") || "tg";
+        gcolor.value = localStorage.getItem("settings.gcolor") || "gc";
+        tcolor.dispatchEvent(new Event('change'));
+        gcolor.dispatchEvent(new Event('change'));
+
+        const hscan = document.getElementById("hscan");
+        hscan.addEventListener("change", display_hscan);
+        hscan.checked = localStorage.getItem("settings.hscan") !== "false";
+        hscan.dispatchEvent(new Event('change'));
+
+        const vscan = document.getElementById("vscan");
+        vscan.addEventListener("change", display_vscan);
+        vscan.checked = localStorage.getItem("settings.vscan") !== "false";
+        vscan.dispatchEvent(new Event('change'));
+
+        run_stop_btn = document.getElementById("run_stop");
+        run_stop_btn.addEventListener("click", ()=>{(interval?stop:run)()});
+        document.getElementById("reset").addEventListener("click", reset);
+        document.querySelector("div.buttons>div>input").addEventListener("change", (e)=>{motherboard.audio.level=e.target.value});
+
+        parse_params();
+
+        motherboard.message('press "run" below to start vm');
+    }
+
+    function on_resize(e) {
+        const display = document.querySelector("div.display");
+        const canvas = document.querySelector("div.display>div>canvas");
+        if(e.clientX) {
+            const new_size = Math.max(634, e.clientX - mouse_offs);
+            display.style.width = new_size+"px";
+        }
+        const delta = display.offsetWidth - canvas.offsetWidth;
+        if((delta < 70) || (delta > 351)) {
+            const r = ((display.offsetWidth - 70) / 282) & 0x3fff;
+            canvas.style.width = (r * 282)+"px";
+            canvas.style.height = (r * 195)+"px";
+            localStorage.setItem("settings.display.width", r * 306);
+        }
+    }
+    function begin_resize(e) {
+        mouse_offs = e.clientX - document.querySelector("div.display").offsetWidth;
+        window.addEventListener("mousemove", on_resize, false);
+        window.addEventListener("mouseup", end_resize, false);
+    }
+    function end_resize(e) {
+        window.removeEventListener("mousemove", on_resize, false);
+        window.removeEventListener("mouseup", end_resize, false);
+    }
+
+    if(document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", () => { init(); });
+    } else {
+        init();
+    }
+  </script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-40575180-2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-40575180-2');
+  </script>
+</body>
+</html>
