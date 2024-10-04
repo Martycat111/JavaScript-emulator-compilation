@@ -1,0 +1,68 @@
+#define STRINGIZE(AA) #AA
+function disassemble(address) {
+  opcode = readbyte(address);
+  address++;
+  var res = "??";
+  switch (opcode) {
+#include "opcodes_base_dis.jscpp"
+  }
+  return [res, address];
+}
+
+function disassemble_CB(address) {
+  opcode = readbyte(address);
+  address++;
+  var res = "??";
+  switch (opcode) {
+#include "z80_cb_dis.jscpp"
+  }
+  return [res, address];
+}
+
+function disassemble_ED(address) {
+  opcode = readbyte(address);
+  address++;
+  var res = "??";
+  switch (opcode) {
+#include "z80_ed_dis.jscpp"
+  }
+  return [res, address];
+}
+
+var dis_REGISTER;
+#define REGISTER dis_REGISTER
+#define REGISTERR dis_REGISTER
+#define REGISTERL dis_REGISTER + "L"
+#define REGISTERH dis_REGISTER + "H"
+
+function disassemble_DD(address) {
+  opcode = readbyte(address);
+  address++;
+  var res = "??";
+  dis_REGISTER = "IX";
+  switch (opcode) {
+#include "z80_ddfd_dis.jscpp"
+  }
+  return [res, address];
+}
+
+function disassemble_FD(address) {
+  opcode = readbyte(address);
+  address++;
+  var res = "??";
+  dis_REGISTER = "IY";
+  switch (opcode) {
+#include "z80_ddfd_dis.jscpp"
+  }
+  return [res, address];
+}
+
+function disassemble_DDFDCB(address) {
+  opcode = readbyte(address);
+  address++;
+  var res = "??";
+  switch (opcode) {
+#include "z80_ddfdcb_dis.jscpp"
+  }
+  return [res, address];
+}
