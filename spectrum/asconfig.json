@@ -1,0 +1,22 @@
+{
+  "targets": {
+    "debug": {
+      "binaryFile": "dist/jsspeccy/jsspeccy-core.wasm",
+      "textFile": "build/core.wat",
+      "sourceMap": true,
+      "debug": true
+    },
+    "release": {
+      "binaryFile": "dist/jsspeccy/jsspeccy-core.wasm",
+      "textFile": "build/core.wat",
+      "sourceMap": true,
+      "optimizeLevel": 3,
+      "shrinkLevel": 0,
+      "converge": false,
+      "noAssert": false
+    }
+  },
+  "options": {
+    "memoryBase": 589824
+  }
+}
